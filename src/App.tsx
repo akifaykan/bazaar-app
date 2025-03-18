@@ -7,6 +7,7 @@ import { ItemModal } from "./components/ItemModal";
 import { Button } from "./components/ui/button";
 import { BazaarItem } from "./types";
 import { Pagination } from "./components/Pagination";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 /**
  * Main application component for The Bazaar Items viewer
@@ -113,10 +114,15 @@ function App() {
 		<div className="min-h-svh bg-background">
 			<header className="border-b">
 				<div className="container mx-auto max-w-6xl py-6">
-					<h1 className="text-3xl font-bold">The Bazaar İtemler</h1>
-					<p className="text-muted-foreground mt-2">
-						Oyundaki tüm itemları keşfedin ve filtreleyin
-					</p>
+					<div className="flex justify-between items-center">
+						<div>
+							<h1 className="text-3xl font-bold">The Bazaar İtemler</h1>
+							<p className="text-muted-foreground mt-2">
+								Oyundaki tüm itemları keşfedin ve filtreleyin
+							</p>
+						</div>
+						<ThemeToggle />
+					</div>
 				</div>
 			</header>
 

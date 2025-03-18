@@ -69,23 +69,27 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 						</div>
 
 						{/* Right columns: Tiers section */}
-						<div className="col-span-3">
-							<h3 className="font-semibold mb-2">Seviyeler</h3>
-							<div className="grid grid-cols-2 gap-3">
-								{Object.entries(tiers).map(([tierName, tier]) => (
-									<div key={tierName} className="border rounded-md p-2 bg-secondary/10">
-										<h4 className="font-medium">{tierName}</h4>
-										<ul className="list-disc list-inside text-sm mt-1 space-y-1">
-											{tier.tooltips.map((tooltip, idx) => (
-												<li key={idx} className="text-muted-foreground">
-													{tooltip}
-												</li>
-											))}
-										</ul>
-									</div>
-								))}
+						{Object.entries(tiers).filter(([_, tier]) => tier.tooltips.length > 0).length > 0 && (
+							<div className="col-span-3">
+								<h3 className="font-semibold mb-2">Seviyeler</h3>
+								<div className="grid grid-cols-2 gap-3">
+									{Object.entries(tiers)
+										.filter(([_, tier]) => tier.tooltips.length > 0)
+										.map(([tierName, tier]) => (
+											<div key={tierName} className="border rounded-md p-2 bg-secondary/10">
+												<h4 className="font-medium">{tierName}</h4>
+												<ul className="list-disc list-inside text-sm mt-1 space-y-1">
+													{tier.tooltips.map((tooltip, idx) => (
+														<li key={idx} className="text-muted-foreground">
+															{tooltip}
+														</li>
+													))}
+												</ul>
+											</div>
+										))}
+								</div>
 							</div>
-						</div>
+						)}
 					</div>
 
 					<Separator />
@@ -105,13 +109,16 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 					)}
 
 					{/* Enchantments section (if present) */}
-					{enchantments && enchantments.length > 0 && (
+					{enchantments && 
+						enchantments.filter(enchantment => enchantment.tooltips.length > 0).length > 0 && (
 						<>
 							<Separator />
 							<div>
 								<h3 className="font-semibold mb-2">Büyüler</h3>
 								<div className="grid grid-cols-3 gap-3">
-									{enchantments.map((enchantment, idx) => (
+									{enchantments
+										.filter(enchantment => enchantment.tooltips.length > 0)
+										.map((enchantment, idx) => (
 										<div key={idx} className="border rounded-md p-2 bg-primary/5">
 											<h4 className="font-medium">{enchantment.type}</h4>
 											<ul className="list-disc list-inside text-sm mt-1 space-y-1">
