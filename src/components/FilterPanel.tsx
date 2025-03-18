@@ -4,6 +4,8 @@ import { Checkbox } from "./ui/checkbox";
 import { BazaarItem } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import { X } from "lucide-react";
 
 /**
  * Props for the FilterPanel component
@@ -24,6 +26,12 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 	const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
+
+	// Check if any filter is active
+	const isFilterActive = searchQuery !== "" || 
+		selectedTags.length > 0 || 
+		selectedSizes.length > 0 || 
+		selectedHeroes.length > 0;
 
 	/**
 	 * Get unique values for each filter category
@@ -105,10 +113,35 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 		}
 	};
 
+	/**
+	 * Clear all filters
+	 */
+	const clearAllFilters = () => {
+		setSearchQuery("");
+		setSelectedTags([]);
+		setSelectedSizes([]);
+		setSelectedHeroes([]);
+	};
+
 	return (
 		<Card>
 			<CardHeader className="pb-3">
-				<CardTitle>Filtreler</CardTitle>
+				<div className="flex justify-between items-center">
+					<CardTitle>Filtreler</CardTitle>
+					<div className="h-8 flex items-center">
+						{isFilterActive && (
+							<Button 
+								variant="ghost" 
+								size="sm" 
+								onClick={clearAllFilters}
+								className="text-muted-foreground hover:text-foreground"
+							>
+								<X className="h-4 w-4 mr-1" />
+								<span>Temizle</span>
+							</Button>
+						)}
+					</div>
+				</div>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<div className="space-y-2">
