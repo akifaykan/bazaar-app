@@ -1,5 +1,12 @@
 import { Button } from "./ui/button";
 import React from "react";
+import { 
+	Select, 
+	SelectContent, 
+	SelectItem, 
+	SelectTrigger, 
+	SelectValue 
+} from "./ui/select";
 
 /**
  * Props for the Pagination component
@@ -74,59 +81,93 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }: Paginati
 		}
 	};
 	
+	// Create an array of all page numbers for the select dropdown
+	const allPages = Array.from({ length: totalPages }, (_, i) => i + 1);
+	
+	const handlePageSelect = (value: string) => {
+		const page = parseInt(value, 10);
+		if (page !== currentPage) {
+			onPageChange(page);
+		}
+	};
+	
 	return (
-		<div className="flex items-center justify-center gap-1">
-			{/* First page */}
-			<Button 
-				variant="outline" 
-				size="sm"
-				disabled={currentPage === 1}
-				onClick={handleFirstPage}
-			>
-				«
-			</Button>
-			
-			{/* Previous page */}
-			<Button 
-				variant="outline" 
-				size="sm"
-				disabled={currentPage === 1}
-				onClick={handlePrevPage}
-			>
-				‹
-			</Button>
-			
-			{/* Page numbers */}
-			{getPageNumbers().map(page => (
+		<div className="flex flex-wrap items-center justify-between gap-3">
+			<div className="flex items-center gap-1">
+				{/* First page */}
 				<Button 
-					key={page}
-					variant={currentPage === page ? "default" : "outline"} 
+					variant="outline" 
 					size="sm"
-					onClick={() => handlePageClick(page)}
+					disabled={currentPage === 1}
+					onClick={handleFirstPage}
 				>
-					{page}
+					«
 				</Button>
-			))}
+				
+				{/* Previous page */}
+				<Button 
+					variant="outline" 
+					size="sm"
+					disabled={currentPage === 1}
+					onClick={handlePrevPage}
+				>
+					‹
+				</Button>
+				
+				{/* Page numbers */}
+				{getPageNumbers().map(page => (
+					<Button 
+						key={page}
+						variant={currentPage === page ? "default" : "outline"} 
+						size="sm"
+						onClick={() => handlePageClick(page)}
+					>
+						{page}
+					</Button>
+				))}
+				
+				{/* Next page */}
+				<Button 
+					variant="outline" 
+					size="sm"
+					disabled={currentPage === totalPages}
+					onClick={handleNextPage}
+				>
+					›
+				</Button>
+				
+				{/* Last page */}
+				<Button 
+					variant="outline" 
+					size="sm"
+					disabled={currentPage === totalPages}
+					onClick={handleLastPage}
+				>
+					»
+				</Button>
+			</div>
 			
-			{/* Next page */}
-			<Button 
-				variant="outline" 
-				size="sm"
-				disabled={currentPage === totalPages}
-				onClick={handleNextPage}
-			>
-				›
-			</Button>
-			
-			{/* Last page */}
-			<Button 
-				variant="outline" 
-				size="sm"
-				disabled={currentPage === totalPages}
-				onClick={handleLastPage}
-			>
-				»
-			</Button>
+			{/* Page selector dropdown */}
+			{totalPages > 5 && (
+				<div className="flex items-center gap-2">
+					<span className="text-sm text-muted-foreground">Sayfaya git:</span>
+					<Select
+						value={currentPage.toString()}
+						onValueChange={handlePageSelect}
+					>
+						<SelectTrigger className="w-[70px]">
+							<SelectValue placeholder={currentPage.toString()} />
+						</SelectTrigger>
+						<SelectContent>
+							{allPages.map(page => (
+								<SelectItem key={page} value={page.toString()}>
+									{page}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+			)}
 		</div>
 	);
 };
