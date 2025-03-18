@@ -22,16 +22,7 @@ type ItemModalProps = {
 export function ItemModal({ item, open, onClose }: ItemModalProps) {
 	if (!item) return null;
 
-	const {
-		name,
-		size,
-		tags,
-		heroes,
-		tiers,
-		enchantments,
-		unifiedTooltips,
-		remarks,
-	} = item;
+	const { name, size, tags, heroes, tiers, enchantments, unifiedTooltips, remarks } = item;
 
 	return (
 		<Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -57,7 +48,9 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 								<p>{size}</p>
 							</div>
 							<div>
-								<h4 className="font-medium text-sm text-muted-foreground">Kahramanlar</h4>
+								<h4 className="font-medium text-sm text-muted-foreground">
+									Kahramanlar
+								</h4>
 								<div className="flex flex-wrap gap-1 mt-1">
 									{heroes.map((hero) => (
 										<Badge key={hero} variant="outline" className="text-xs">
@@ -69,18 +62,25 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 						</div>
 
 						{/* Right columns: Tiers section */}
-						{Object.entries(tiers).filter(([_, tier]) => tier.tooltips.length > 0).length > 0 && (
+						{Object.entries(tiers).filter(([_, tier]) => tier.tooltips.length > 0)
+							.length > 0 && (
 							<div className="col-span-1 md:col-span-3">
 								<h3 className="font-semibold mb-2">Seviyeler</h3>
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 									{Object.entries(tiers)
 										.filter(([_, tier]) => tier.tooltips.length > 0)
 										.map(([tierName, tier]) => (
-											<div key={tierName} className="border rounded-md p-2 bg-secondary/10">
+											<div
+												key={tierName}
+												className="border rounded-md p-2 bg-secondary/10"
+											>
 												<h4 className="font-medium">{tierName}</h4>
 												<ul className="list-disc list-inside text-sm mt-1 space-y-1">
 													{tier.tooltips.map((tooltip, idx) => (
-														<li key={idx} className="text-muted-foreground break-words">
+														<li
+															key={idx}
+															className="text-muted-foreground break-words"
+														>
 															{tooltip}
 														</li>
 													))}
@@ -109,34 +109,44 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 					)}
 
 					{/* Enchantments section (if present) */}
-					{enchantments && 
-						enchantments.filter(enchantment => enchantment.tooltips.length > 0).length > 0 && (
-						<>
-							<Separator />
-							<div>
-								<h3 className="font-semibold mb-2">Büyüler</h3>
-								<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-									{enchantments
-										.filter(enchantment => enchantment.tooltips.length > 0)
-										.map((enchantment, idx) => (
-										<div key={idx} className="border rounded-md p-2 bg-primary/5">
-											<h4 className="font-medium">{enchantment.type}</h4>
-											<ul className="list-disc list-inside text-sm mt-1 space-y-1">
-												{enchantment.tooltips.map((tooltip, tooltipIdx) => (
-													<li
-														key={tooltipIdx}
-														className="text-muted-foreground break-words"
-													>
-														{tooltip}
-													</li>
-												))}
-											</ul>
-										</div>
-									))}
+					{enchantments &&
+						enchantments.filter((enchantment) => enchantment.tooltips.length > 0)
+							.length > 0 && (
+							<>
+								<Separator />
+								<div>
+									<h3 className="font-semibold mb-2">Büyüler</h3>
+									<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+										{enchantments
+											.filter(
+												(enchantment) => enchantment.tooltips.length > 0
+											)
+											.map((enchantment, idx) => (
+												<div
+													key={idx}
+													className="border rounded-md p-2 bg-primary/5"
+												>
+													<h4 className="font-medium">
+														{enchantment.type}
+													</h4>
+													<ul className="list-disc list-inside text-sm mt-1 space-y-1">
+														{enchantment.tooltips.map(
+															(tooltip, tooltipIdx) => (
+																<li
+																	key={tooltipIdx}
+																	className="text-muted-foreground break-words"
+																>
+																	{tooltip}
+																</li>
+															)
+														)}
+													</ul>
+												</div>
+											))}
+									</div>
 								</div>
-							</div>
-						</>
-					)}
+							</>
+						)}
 
 					{/* Remarks (if present) */}
 					{remarks && remarks.length > 0 && (
@@ -144,7 +154,9 @@ export function ItemModal({ item, open, onClose }: ItemModalProps) {
 							<Separator />
 							<div>
 								<h3 className="font-semibold mb-2">Notlar</h3>
-								<p className="text-sm text-muted-foreground break-words">{remarks}</p>
+								<p className="text-sm text-muted-foreground break-words">
+									{remarks}
+								</p>
 							</div>
 						</>
 					)}

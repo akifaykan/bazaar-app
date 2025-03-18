@@ -28,9 +28,10 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 	const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
 
 	// Check if any filter is active
-	const isFilterActive = searchQuery !== "" || 
-		selectedTags.length > 0 || 
-		selectedSizes.length > 0 || 
+	const isFilterActive =
+		searchQuery !== "" ||
+		selectedTags.length > 0 ||
+		selectedSizes.length > 0 ||
 		selectedHeroes.length > 0;
 
 	/**
@@ -130,9 +131,9 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 					<CardTitle>Filtreler</CardTitle>
 					<div className="h-8 flex items-center">
 						{isFilterActive && (
-							<Button 
-								variant="ghost" 
-								size="sm" 
+							<Button
+								variant="ghost"
+								size="sm"
 								onClick={clearAllFilters}
 								className="text-muted-foreground hover:text-foreground"
 							>
