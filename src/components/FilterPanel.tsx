@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { BazaarItem } from "../types";
@@ -33,9 +33,10 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 	const uniqueHeroes = Array.from(new Set(items.flatMap((item) => item.heroes))).sort();
 
 	/**
-	 * Filter logic
+	 * Apply filters and update parent component
+	 * Using useCallback to memoize the filtering function
 	 */
-	useEffect(() => {
+	const applyFilters = useCallback(() => {
 		let filtered = [...items];
 
 		/**
@@ -78,6 +79,13 @@ export function FilterPanel({ items, onFilterChange }: FilterPanelProps) {
 
 		onFilterChange(filtered);
 	}, [items, searchQuery, selectedTags, selectedSizes, selectedHeroes, onFilterChange]);
+
+	/**
+	 * Apply filters when dependencies change
+	 */
+	useEffect(() => {
+		applyFilters();
+	}, [applyFilters]);
 
 	/**
 	 * Handle checkbox state change

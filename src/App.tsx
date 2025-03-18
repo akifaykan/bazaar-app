@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchItems } from "./services/api";
 import { ItemCard } from "./components/ItemCard";
@@ -6,18 +6,28 @@ import { FilterPanel } from "./components/FilterPanel";
 import { ItemModal } from "./components/ItemModal";
 import { Button } from "./components/ui/button";
 import { BazaarItem } from "./types";
+import { Pagination } from "./components/Pagination";
 
 /**
  * Main application component for The Bazaar Items viewer
- * Manages fetching, filtering and displaying items
+ * Manages fetching, filtering, displaying items and pagination
+ * 
+ * @returns {JSX.Element} The rendered application
  */
 function App() {
-	const [filteredItems, setFilteredItems] = useState<BazaarItem[]>([]);
+	// Base data state
 	const [selectedItem, setSelectedItem] = useState<BazaarItem | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [filteredItems, setFilteredItems] = useState<BazaarItem[]>([]);
+	
+	// Pagination state
+	const [pageConfig, setPageConfig] = useState({
+		currentPage: 1,
+		itemsPerPage: 9
+	});
 
 	/**
-	 * Fetch data from API
+	 * Fetch data from API using React Query
 	 */
 	const {
 		data: items = [],
@@ -32,18 +42,72 @@ function App() {
 	 * Initialize filtered items with all items on first load
 	 */
 	useEffect(() => {
-		if (items.length > 0) {
+		if (items && items.length > 0) {
 			setFilteredItems(items);
+			// Reset to page 1 when data changes
+			setPageConfig(prev => ({ ...prev, currentPage: 1 }));
 		}
 	}, [items]);
 
 	/**
 	 * Handle item click to show details modal
 	 */
-	const handleItemClick = (item: BazaarItem) => {
+	const handleItemClick = useCallback((item: BazaarItem) => {
 		setSelectedItem(item);
 		setIsModalOpen(true);
-	};
+	}, []);
+	
+	/**
+	 * Handle page change in pagination
+	 */
+	const handlePageChange = useCallback((page: number) => {
+		setPageConfig(prev => ({ ...prev, currentPage: page }));
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}, []);
+	
+	/**
+	 * Handle items per page change
+	 */
+	const handleItemsPerPageChange = useCallback((perPage: number) => {
+		setPageConfig({
+			currentPage: 1, // Reset to page 1 when items per page changes
+			itemsPerPage: perPage 
+		});
+	}, []);
+	
+	/**
+	 * Handle filter change
+	 */
+	const handleFilterChange = useCallback((items: BazaarItem[]) => {
+		setFilteredItems(items);
+		setPageConfig(prev => ({ ...prev, currentPage: 1 }));
+	}, []);
+	
+	// Calculate pagination values using useMemo to avoid recalculations
+	const paginationData = useMemo(() => {
+		const { currentPage, itemsPerPage } = pageConfig;
+		
+		// Calculate total pages
+		const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
+		
+		// Ensure current page is within bounds
+		const validPage = Math.max(1, Math.min(currentPage, totalPages));
+		
+		// Calculate item indices
+		const startIndex = (validPage - 1) * itemsPerPage;
+		const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
+		
+		// Get visible items
+		const visibleItems = filteredItems.slice(startIndex, endIndex);
+		
+		return {
+			totalPages,
+			validPage,
+			visibleItems
+		};
+	}, [filteredItems, pageConfig]);
+	
+	const { totalPages, validPage, visibleItems } = paginationData;
 
 	return (
 		<div className="min-h-svh bg-background">
@@ -77,7 +141,25 @@ function App() {
 				) : (
 					<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 						<div className="lg:col-span-1">
-							<FilterPanel items={items} onFilterChange={setFilteredItems} />
+							<FilterPanel 
+								items={items} 
+								onFilterChange={handleFilterChange} 
+							/>
+							
+							{/* Items per page selection */}
+							<div className="mt-4 bg-card p-4 rounded-md border">
+								<label className="block text-sm font-medium mb-2">Sayfa başına item</label>
+								<select
+									className="w-full p-2 border rounded bg-background"
+									value={pageConfig.itemsPerPage}
+									onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+								>
+									<option value={9}>9</option>
+									<option value={12}>12</option>
+									<option value={24}>24</option>
+									<option value={48}>48</option>
+								</select>
+							</div>
 						</div>
 
 						<div className="lg:col-span-3">
@@ -87,21 +169,34 @@ function App() {
 										Bulunan İtemler: {filteredItems.length}
 									</h2>
 									<div className="text-sm text-muted-foreground">
-										Toplam: {items.length} item
+										Sayfa {validPage}/{totalPages} (Toplam: {items.length} item)
 									</div>
 								</div>
 							</div>
 
 							{filteredItems.length > 0 ? (
-								<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-									{filteredItems.map((item) => (
-										<ItemCard
-											key={item.id}
-											item={item}
-											onClick={() => handleItemClick(item)}
-										/>
-									))}
-								</div>
+								<>
+									<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+										{visibleItems.map((item) => (
+											<ItemCard
+												key={item.id}
+												item={item}
+												onClick={() => handleItemClick(item)}
+											/>
+										))}
+									</div>
+									
+									{/* Pagination controls */}
+									{totalPages > 1 && (
+										<div className="mt-8">
+											<Pagination 
+												currentPage={validPage}
+												totalPages={totalPages}
+												onPageChange={handlePageChange}
+											/>
+										</div>
+									)}
+								</>
 							) : (
 								<div className="bg-card p-10 text-center rounded-md border">
 									<p className="text-lg text-muted-foreground">
