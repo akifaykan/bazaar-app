@@ -1,9 +1,10 @@
 import { ApiResponse, BazaarItem } from "../types";
 
 /**
- * API URL for items - Environment variable or fallback to default
+ * API URL for items - Environment variable or fallback to local proxy
+ * Vercel'de çalışacak şekilde proxy adresi kullanıyoruz
  */
-const API_URL = import.meta.env.VITE_API_URL || "/api/api/items";
+const API_URL = import.meta.env.VITE_API_URL || "/api/items";
 
 /**
  * Fetches all items from The Bazaar API
