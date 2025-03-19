@@ -35,6 +35,7 @@ function App() {
 		data: items = [],
 		isLoading,
 		error,
+		refetch,
 	} = useQuery({
 		queryKey: ["items"],
 		queryFn: fetchItems,
@@ -111,6 +112,11 @@ function App() {
 
 	const { totalPages, validPage, visibleItems } = paginationData;
 
+	// Extract error message from error object
+	const errorMessage = error instanceof Error 
+		? error.message
+		: "Bilinmeyen bir hata oluştu.";
+
 	return (
 		<div className="min-h-svh flex flex-col bg-background">
 			<header className="border-b">
@@ -133,17 +139,30 @@ function App() {
 						<div className="text-xl font-semibold">Yükleniyor...</div>
 					</div>
 				) : error ? (
-					<div className="bg-destructive/10 text-destructive p-4 rounded-md">
-						<p>
-							Veriler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
+					<div className="bg-destructive/10 text-destructive p-6 rounded-md">
+						<h2 className="text-xl font-semibold mb-2">Veri Yükleme Hatası</h2>
+						<p className="mb-4">
+							Veriler yüklenirken bir hata oluştu:
 						</p>
-						<Button
-							variant="outline"
-							className="mt-2"
-							onClick={() => window.location.reload()}
-						>
-							Yeniden Dene
-						</Button>
+						<div className="bg-black/5 p-3 rounded mb-4 text-sm font-mono">
+							{errorMessage}
+						</div>
+						<div className="flex flex-col sm:flex-row gap-2">
+							<Button
+								variant="outline"
+								onClick={() => refetch()}
+								className="flex-1"
+							>
+								Yeniden Dene
+							</Button>
+							<Button
+								variant="default"
+								onClick={() => window.location.reload()}
+								className="flex-1"
+							>
+								Sayfayı Yenile
+							</Button>
+						</div>
 					</div>
 				) : (
 					<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

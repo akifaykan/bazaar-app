@@ -6,13 +6,16 @@ import App from "./App.tsx";
 import { ThemeProvider } from "./lib/theme-provider";
 
 /**
- * Create QueryClient instance
+ * Create QueryClient instance with improved error handling
  */
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			staleTime: 1000 * 60 * 5, // 5 minutes
-			retry: 1,
+			retry: 2, // Maximum number of retries
+			retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+			refetchOnWindowFocus: false, // Don't automatically refetch on window focus
+			refetchOnMount: true, // Always fetch fresh data when component mounts
 		},
 	},
 });
