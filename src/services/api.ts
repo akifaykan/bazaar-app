@@ -2,7 +2,7 @@ import { ApiResponse, BazaarItem } from "../types";
 
 /**
  * API URL for items - Environment variable or fallback to local proxy
- * Vercel'de çalışacak şekilde proxy adresi kullanıyoruz
+ * Using proxy address to work properly in Vercel
  */
 const API_URL = import.meta.env.VITE_API_URL || "/api/items";
 
@@ -33,7 +33,7 @@ export async function fetchItems(): Promise<BazaarItem[]> {
 		const data: ApiResponse = await response.json();
 		return data.data;
 	} catch (error) {
-		throw new Error(`API veri çekme hatası: ${error instanceof Error ? error.message : String(error)}`);
+		throw new Error(`Error fetching API data: ${error instanceof Error ? error.message : String(error)}`);
 	}
 }
 

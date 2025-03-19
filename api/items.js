@@ -5,18 +5,18 @@ export const config = {
 
 export default async function handler(request) {
   try {
-    // API'den veriyi çek
+    // Fetch data from API
     const apiResponse = await fetch('https://www.howbazaar.gg/api/items');
     
-    // API yanıtının başarılı olduğunu kontrol et
+    // Check if API response is successful
     if (!apiResponse.ok) {
       throw new Error(`API error: ${apiResponse.status}`);
     }
     
-    // API yanıtını al
+    // Get API response data
     const data = await apiResponse.json();
     
-    // CORS başlıkları ekleyerek yanıt döndür
+    // Return response with CORS headers
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
@@ -27,9 +27,9 @@ export default async function handler(request) {
       },
     });
   } catch (error) {
-    // Hata durumunda
+    // Handle errors
     return new Response(
-      JSON.stringify({ error: `API veri çekme hatası: ${error.message}` }),
+      JSON.stringify({ error: `Error fetching API data: ${error.message}` }),
       {
         status: 500,
         headers: {
