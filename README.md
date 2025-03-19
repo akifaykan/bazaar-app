@@ -1,3 +1,5 @@
-# React + TypeScript + Vite
+## The Bazaar Game Items App 
 
-Demo: [bazaar-app-vercel](https://bazaar-app-ecru.vercel.app/)
+(React + TypeScript + Vite)
+
+Demo: <a href="https://bazaar-app-ecru.vercel.app/" target="_blank" rel="noopener noreferrer">bazaar-app-vercel</a>
